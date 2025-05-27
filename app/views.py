@@ -5,11 +5,13 @@ from .serializers import SensoresSerializer , AmbientesSerializer , HistoricoSer
 from django.http import Http404
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 # Listar Todos e criar sensores
 class SensoresListCreate(ListCreateAPIView):
     queryset = Sensores.objects.all()
     serializer_class = SensoresSerializer
+    permission_classes = [IsAuthenticated]
     
 
 # Class que ira deletar, visualizar um em expecifico  e atualizar sensores
@@ -17,6 +19,7 @@ class  SensoresRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Sensores.objects.all()
     serializer_class = SensoresSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
 
     #mensagem de erro quando o sensor não é encontrado
     def get_object(self):
@@ -34,12 +37,14 @@ class  SensoresRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 class AmbientesListCreate(ListCreateAPIView):
     queryset = Ambientes.objects.all()
     serializer_class = AmbientesSerializer
+    permission_classes = [IsAuthenticated]
 
 # Class que ira deletar, visualizar um em expecifico  e atualizar ambientes
 class AmbientesRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Ambientes.objects.all()
     serializer_class = AmbientesSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
 
     
     #mensagem de erro quando o ambiente não é encontrado
@@ -58,12 +63,14 @@ class AmbientesRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 class HistoricoListCreate(ListCreateAPIView):
     queryset = Historico.objects.all()
     serializer_class = HistoricoSerializer
+    permission_classes = [IsAuthenticated]
 
 # Class que ira deletar, visualizar um em expecifico  e atualizar Historico
 class HistoricoRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Historico.objects.all()
     serializer_class = HistoricoSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated]
 
     #mensagem de erro quando o historico não é encontrado
     def get_object(self):
