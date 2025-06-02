@@ -1,5 +1,5 @@
 from django.urls import path 
-from .views import SensoresListCreate , SensoresRetrieveUpdateDestroy, AmbientesListCreate, AmbientesRetrieveUpdateDestroy , HistoricoListCreate, HistoricoRetrieveUpdateDestroy
+from .views import SensoresListCreate , SensoresRetrieveUpdateDestroy, AmbientesListCreate, AmbientesRetrieveUpdateDestroy , HistoricoListCreate, HistoricoRetrieveUpdateDestroy, ler_excel, exportar_excel
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [
@@ -17,6 +17,10 @@ urlpatterns = [
 
     #Login
     path('login/',TokenObtainPairView.as_view()),
+
+    #excel
+    path('importar/', ler_excel, name='ler_excel'),
+    path('exportar/', exportar_excel, name='exportar_excel'),
 ]
 #ana
 #24240109

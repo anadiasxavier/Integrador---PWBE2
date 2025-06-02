@@ -5,7 +5,8 @@ from .serializers import SensoresSerializer , AmbientesSerializer , HistoricoSer
 from django.http import Http404
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated 
+from .utils import ler_excel, exportar_excel
 
 # Listar Todos e criar sensores
 class SensoresListCreate(ListCreateAPIView):
