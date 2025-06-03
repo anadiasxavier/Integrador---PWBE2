@@ -6,6 +6,7 @@ from .models import Ambientes, Historico, Sensores
 from django.http import JsonResponse, HttpResponse, FileResponse
 import zipfile
 import io
+from django.shortcuts import get_object_or_404
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # pasta onde está o script
 ambientes_excel = os.path.join(BASE_DIR, 'excel', 'ambientes.xlsx')
@@ -103,7 +104,6 @@ def ler_excel_sensor():
             status = row['status']
         )
         
-        print(sensor)
 
 def criar_sensor(sensor, mac_address, unidade_med, latitude, longitude, status):
     sensor_criado = Sensores.objects.create(
@@ -123,28 +123,32 @@ def exportar_sensores(request):
 
 # HISTORICO
 
+
+def criar_historico(sensor, ambiente, valor, timestamp):
+    sensor_fk = get_object_or_404(Sensores, id=sensor)
+    ambiente_fk =get_object_or_404(Ambientes, id=ambiente)
+
+    historico_criado = Historico.objects.create(
+        sensor=sensor_fk,
+        ambiente=ambiente_fk,
+        valor = valor,
+        timestamp = timestamp
+    )
+    return historico_criado
+
 # ler historico
 def ler_excel_historico():
     df = pd.concat([pd.read_excel(historico_excel) ])
     for _, row in df.iterrows():
-        historico = criar_historico(
+        criar_historico(
             sensor = row['sensor'],
             ambiente = row['ambiente'],
             valor = row['valor'],
             timestamp = row['timestamp'],
         )
         
-        print("historico importados!")
 
 
-def criar_historico(sensor, ambiente, valor, timestamp):
-    historico_criado = Historico.objects.create(
-        sensor = sensor,
-        ambiente = ambiente,
-        valor = valor,
-        timestamp = timestamp
-    )
-    return historico_criado
 
 def exportar_historico(request):
     todos_historico = Historico.objects.all().values()

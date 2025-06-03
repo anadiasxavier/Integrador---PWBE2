@@ -44,11 +44,14 @@ INSTALLED_APPS = [
 ]
 
 
-#definindo a biblioteca JWT
+#definindo a bibliotecas
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES' : (
+    'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
 }
 
 #configuracao do jwt

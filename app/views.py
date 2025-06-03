@@ -1,18 +1,29 @@
+import traceback
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView, ListAPIView 
+from rest_framework.views import APIView
 from .models import Sensores , Ambientes , Historico
 from .serializers import SensoresSerializer , AmbientesSerializer , HistoricoSerializer
 from django.http import Http404
+from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated 
 from .utils import ler_excel, exportar_excel
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import sensorFiltro, ambienteFiltro , dataSensor
 
 # Listar Todos e criar sensores
 class SensoresListCreate(ListCreateAPIView):
     queryset = Sensores.objects.all()
     serializer_class = SensoresSerializer
     permission_classes = [IsAuthenticated]
+
+    #filtros 
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = sensorFiltro 
+    #filterset_class = dataSensor
+
     
 
 # Class que ira deletar, visualizar um em expecifico  e atualizar sensores
@@ -40,6 +51,10 @@ class AmbientesListCreate(ListCreateAPIView):
     serializer_class = AmbientesSerializer
     permission_classes = [IsAuthenticated]
 
+    #filtros ambientes
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ambienteFiltro
+
 # Class que ira deletar, visualizar um em expecifico  e atualizar ambientes
 class AmbientesRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Ambientes.objects.all()
@@ -65,6 +80,7 @@ class HistoricoListCreate(ListCreateAPIView):
     queryset = Historico.objects.all()
     serializer_class = HistoricoSerializer
     permission_classes = [IsAuthenticated]
+  
 
 # Class que ira deletar, visualizar um em expecifico  e atualizar Historico
 class HistoricoRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
@@ -84,3 +100,28 @@ class HistoricoRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         super().destroy(request, *args, **kwargs)
         return Response({"O historico foi excluído"})
+    
+
+
+#importar
+class ImportarList(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        try:
+            ler_excel(request)
+            return Response({"A importação deu certo!"}, status=status.HTTP_200_OK) 
+        except Exception :
+            return Response({"erro, você não tem autorização"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+#exportar
+class ExportarList(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            return exportar_excel(request)
+            return Response({"A exportação deu certo!"}, status=status.HTTP_200_OK) 
+        except Exception:
+            return Response({"erro, você não tem autorização"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
